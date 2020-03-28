@@ -10,15 +10,22 @@ class CircleReport < Thor
   end
 
   desc "rpt", "Retrieves run data from Circle and displays #successes and #others from the 7 days commencing [date]"
-  def rpt(wc_date)
-    puts wc_date
-    # json_arr = circle_data
+  def rpt(wc_date = '')
+    puts "Date: #{wc_date}"
     json_arr = data_from_file
+    # json_arr = circle_data
     puts "Number of entries: #{json_arr.size}"
-    puts "Keys: #{json_arr[0].keys}"
+    # puts "Keys: #{json_arr[0].keys}"
+    current_date = Date.today
+    results = {}
     json_arr.each do |build|
-      commit_date = Time.parse(build['committer_date'])
-      puts "#{commit_date} #{build['status']}"
+      commit_date = Date.parse(build['committer_date'])
+      results[commit_date.to_s] = build['status']
+      # puts "#{commit_date} #{build['status']}"
+    end
+
+    results.each do |k, v|
+      puts "#{k} #{v}"
     end
   end
 
