@@ -9,27 +9,48 @@ class CircleReport < Thor
     true
   end
 
-  desc "rpt", "Retrieves run data from Circle and displays #successes and #others from the 7 days commencing [date]"
+  desc "rpt", "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date]"
+
   def rpt(wc_date = '')
-    puts "Date: #{wc_date}"
-    json_arr = data_from_file
-    # json_arr = circle_data
-    puts "Number of entries: #{json_arr.size}"
-    # puts "Keys: #{json_arr[0].keys}"
-    current_date = Date.today
-    results = {}
-    json_arr.each do |build|
-      commit_date = Date.parse(build['committer_date'])
-      results[commit_date.to_s] = build['status']
-      # puts "#{commit_date} #{build['status']}"
-    end
+    start_date = Date.parse(wc_date)
+    puts "Date: #{start_date}"
+
+    ENV['CI_FILE'] == 'true' ? json_arr = data_from_file : json_arr = circle_data
+    results = scan_results(json_arr, start_date)
 
     results.each do |k, v|
-      puts "#{k} #{v}"
+      puts "Date: #{k} Successful builds: #{v[0]} other builds: #{v[1]}"
     end
   end
 
   private
+
+  def scan_results(arr, start)
+    # output is a hash where the date is the key and the value is an array [#successes, #others]
+    out = {}
+    range = start..start + 6
+    arr.each do |build|
+      commit_date = Date.parse(build['committer_date'])
+      if range === commit_date
+        out_key = commit_date.to_s
+        if out.has_key?(out_key)
+          if build['status'] == 'success' || build['status'] == 'fixed'
+            sc = [out[out_key][0] + 1, out[out_key][1]]
+          else
+            sc = [out[out_key][0], out[out_key][1]]
+          end
+          out[out_key] = sc
+        else
+          if build['status'] == 'success' || build['status'] == 'fixed'
+            out[out_key] = [1, 0]
+          else
+            out[out_key] = [0, 1]
+          end
+        end
+      end
+    end
+    out
+  end
 
   def circle_data
     limit = 100
