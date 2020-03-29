@@ -18,9 +18,18 @@ class CircleReport < Thor
     ENV['CI_FILE'] == 'true' ? json_arr = data_from_file : json_arr = circle_data
     results = scan_results(json_arr, start_date)
 
+    success = 0.0
+    fails = 0.0
     results.each do |k, v|
       puts "Date: #{k} Successful builds: #{v[0]} other builds: #{v[1]}"
+      success = success + v[0]
+      fails = fails + v[1]
     end
+    puts "\nTotal successful builds: #{success.round(0)}, total failing builds: #{fails.round(0)}"
+    perc_succ = (success / (success + fails)) * 100
+    perc_fails = (fails / (success + fails)) * 100
+    puts "Percentage succeeding: #{perc_succ.round(2)}" unless success.zero?
+    puts "Percentage failing: #{perc_fails.round(2)}" unless fails.zero?
   end
 
   private
@@ -37,7 +46,7 @@ class CircleReport < Thor
           if build['status'] == 'success' || build['status'] == 'fixed'
             sc = [out[out_key][0] + 1, out[out_key][1]]
           else
-            sc = [out[out_key][0], out[out_key][1]]
+            sc = [out[out_key][0], out[out_key][1] + 1]
           end
           out[out_key] = sc
         else
