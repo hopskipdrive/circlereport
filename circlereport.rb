@@ -15,7 +15,7 @@ class CircleReport < Thor
     start_date = Date.parse(wc_date)
     puts "Date: #{start_date}"
 
-    ENV['CI_FILE'] == 'true' ? json_arr = data_from_file : json_arr = circle_data
+    json_arr = ENV['CI_FILE'] == 'true' ? data_from_file : circle_data
     results = scan_results(json_arr, start_date)
 
     success = 0.0

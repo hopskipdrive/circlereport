@@ -1,9 +1,0 @@
-# curl -X GET https://circleci.com/api/v1/project/hopskipdrive/rails-api/tree/develop?shallow=true -H "Circle-Token: 68ac6eec7aa21697f7a740355d09c642d1e0dde7"
-GET https://{{host}}/api/v1/project/hopskipdrive/rails-api/tree/develop?shallow=true&limit=100
-Circle-Token: {{token}}
-### > {%
-client.test("Request executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
-
