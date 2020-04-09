@@ -12,7 +12,11 @@ class CircleReport < Thor
   desc "rpt", "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date]"
 
   def rpt(wc_date = '')
-    start_date = Date.parse(wc_date)
+    if wc_date.empty?
+      start_date = Date.today - 7
+    else
+      start_date = Date.parse(wc_date)
+    end
     puts "Date: #{start_date}"
 
     json_arr = ENV['CI_FILE'] == 'true' ? data_from_file : circle_data
