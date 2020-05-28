@@ -1,10 +1,11 @@
+<h1>Circle Reports</h1>
 Circlereports is a Ruby script that runs on your local machine.
 
 To run, from Terminal, you need to run `gem install thor` then run:
 ```
 ./circlereport.rb rpt <date>
 ```
-where `date` is the day on which you wish the report to start.
+where `date` is the day on which you wish the report to start. The default value for `date` is Today - 7 days.
 
 You need to create a local environment variable `CIRCLETOKEN` which can be obtained from the CircleCI dashboard `https://circleci.com/account/api` `Personal API Tokens`
 
@@ -48,4 +49,6 @@ Traceback (most recent call last):
 13:24 ~/dev/circlereports (master) $
 ```
 
+<h2>Options</h2>
+`--capture` will capture the Circle data to a `JSON` file. The default is `--no-capture`.
 

@@ -9,7 +9,8 @@ class CircleReport < Thor
     true
   end
 
-  desc "rpt", "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date]"
+  desc "rpt", "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date]. [date] defaults to Today - 7."
+  option :capture, type: :boolean
 
   def rpt(wc_date = '')
     if wc_date.empty?
@@ -19,7 +20,7 @@ class CircleReport < Thor
     end
     puts "Date: #{start_date}"
 
-    json_arr = ENV['CI_FILE'] == 'true' ? data_from_file : circle_data
+    json_arr = ENV['CI_FILE'] == 'true' ? data_from_file : circle_data(options[:capture])
     results = scan_results(json_arr, start_date)
 
     success = 0.0
@@ -65,7 +66,7 @@ class CircleReport < Thor
     out
   end
 
-  def circle_data
+  def circle_data(capture)
     limit = 100
     url = "https://circleci.com/api/v1/project/hopskipdrive/rails-api/tree/develop?shallow=true&limit=#{limit}"
     token = ENV['CIRCLETOKEN']
@@ -77,6 +78,7 @@ class CircleReport < Thor
       f.each_line { |line| response = response + line }
     }
 
+    File.open("circle_data_#{DateTime.now}.json", 'w') { |file| file.write(response) } if capture
     JSON.parse(response)
   end
 
