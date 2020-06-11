@@ -9,10 +9,25 @@ class CircleReport < Thor
     true
   end
 
-  desc "rpt", "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date]. [date] defaults to Today - 7."
-  option :capture, type: :boolean
+  desc"rpt",
+      "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date] (defaults to Today - 7)."
+
+  option :capture, type: :boolean, desc: 'save the output from CircleCI in a JSON file'
+  option :input, type: :string, desc: 'read data from this file instead of calling the CircleCI endpoint'
+  option :token, type: :string, desc: 'Your API token for CircleCI'
 
   def rpt(wc_date = '')
+    if options[:capture] && options[:input]
+      puts "You can't use both capture and input at the same time"
+      exit 1
+    end
+
+    token = options[:token] || ENV['CIRCLETOKEN']
+    if token.empty?
+      puts "No Circle Token supplied. Use command line --token or environment variable 'CIRCLETOKEN'."
+      exit 1
+    end
+
     if wc_date.empty?
       start_date = Date.today - 7
     else
@@ -20,7 +35,8 @@ class CircleReport < Thor
     end
     puts "Date: #{start_date}"
 
-    json_arr = ENV['CI_FILE'] == 'true' ? data_from_file : circle_data(options[:capture])
+    json_arr = options[:input] ? data_from_file(options[:input]) : circle_data(token, options[:capture])
+    exit 1 unless json_arr
     results = scan_results(json_arr, start_date)
 
     success = 0.0
@@ -66,10 +82,9 @@ class CircleReport < Thor
     out
   end
 
-  def circle_data(capture)
+  def circle_data(token, capture)
     limit = 100
     url = "https://circleci.com/api/v1/project/hopskipdrive/rails-api/tree/develop?shallow=true&limit=#{limit}"
-    token = ENV['CIRCLETOKEN']
 
     response = ''
     open(url,
@@ -80,14 +95,18 @@ class CircleReport < Thor
 
     File.open("circle_data_#{DateTime.now}.json", 'w') { |file| file.write(response) } if capture
     JSON.parse(response)
+  rescue StandardError => error
+    puts "Error retrieving from CircleCI: #{error}.\n'404 Not Found' could indicate a problem with your Circle Token."
   end
 
-  def data_from_file
+  def data_from_file(filename)
     response = ''
-    open './develop1.json' do |f|
+    open filename do |f|
       f.each_line { |line| response = response + line }
     end
     JSON.parse(response)
+  rescue StandardError => error
+    puts "Error reading from file: #{filename}\n#{error}"
   end
 end
 
