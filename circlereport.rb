@@ -10,7 +10,7 @@ class CircleReport < Thor
   end
 
   desc"rpt",
-      "Retrieves run data from Circle and displays #successes and #others for the 7 days commencing [date] (defaults to Today - 7)."
+      "Retrieves run data from CircleCI and displays #successes and #others for the 7 days commencing [date] (defaults to Today - 7)."
 
   option :capture, type: :boolean, desc: 'save the output from CircleCI in a JSON file'
   option :input, type: :string, desc: 'read data from this file instead of calling the CircleCI endpoint'
@@ -37,14 +37,19 @@ class CircleReport < Thor
 
     json_arr = options[:input] ? data_from_file(options[:input]) : circle_data(token, options[:capture])
     exit 1 unless json_arr
-    results = scan_results(json_arr, start_date)
 
+    report(scan_results(json_arr, start_date))
+  end
+
+  private
+
+  def report(results)
     success = 0.0
     fails = 0.0
     results.each do |k, v|
-      puts "Date: #{k} Successful builds: #{v[0]} other builds: #{v[1]}"
-      success = success + v[0]
-      fails = fails + v[1]
+      puts "Date: #{k} Successful builds: #{v['success']} other builds: #{v['fail']}"
+      success = success + v['success']
+      fails = fails + v['fail']
     end
     puts "\nTotal successful builds: #{success.round(0)}, total failing builds: #{fails.round(0)}"
     perc_succ = (success / (success + fails)) * 100
@@ -53,10 +58,8 @@ class CircleReport < Thor
     puts "Percentage failing: #{perc_fails.round(2)}" unless fails.zero?
   end
 
-  private
-
   def scan_results(arr, start)
-    # output is a hash where the date is the key and the value is an array [#successes, #others]
+    # output is a hash where the date is the key and the value is a hash {#success, #fail}
     out = {}
     range = start..start + 6
     arr.each do |build|
@@ -65,16 +68,15 @@ class CircleReport < Thor
         out_key = commit_date.to_s
         if out.has_key?(out_key)
           if build['status'] == 'success' || build['status'] == 'fixed'
-            sc = [out[out_key][0] + 1, out[out_key][1]]
+            out[out_key]['success'] = out[out_key]['success'] + 1 || 1
           else
-            sc = [out[out_key][0], out[out_key][1] + 1]
+            out[out_key]['fail'] = out[out_key]['fail'] + 1 || 1
           end
-          out[out_key] = sc
         else
           if build['status'] == 'success' || build['status'] == 'fixed'
-            out[out_key] = [1, 0]
+            out[out_key] = { 'success' => 1, 'fail' => 0 }
           else
-            out[out_key] = [0, 1]
+            out[out_key] = { 'success' => 0, 'fail' => 1 }
           end
         end
       end
