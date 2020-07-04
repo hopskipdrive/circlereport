@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'hsd_circle_reports'
+HsdCircleReports::Report.start(ARGV)

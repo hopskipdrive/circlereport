@@ -2,7 +2,7 @@
 
 require 'hsd_circle_reports/version'
 
-# HsdCircleReports gets the good stuff
+# HsdCircleReports is the main (only) module
 module HsdCircleReports
   class Error < StandardError; end
 
@@ -15,8 +15,8 @@ module HsdCircleReports
   require 'json'
   require 'time'
 
-  # CircleReport does all the things
-  class CircleReport < Thor
+  # Report inherits from Thor and contains the rpt method, where the main logic is defined
+  class Report < Thor
     def self.exit_on_failure?
       true
     end
@@ -25,21 +25,21 @@ module HsdCircleReports
          'Retrieves run data from CircleCI and displays #successes and #others'\
          'for the 7 days commencing [date] (defaults to Today - 7).'
 
-    option :branch, type: :string, desc: 'the branch to report on'
+    option :branch, type: :string, desc: 'the branch to report on (default: \'develop\')'
     option :capture, type: :boolean, desc: 'save the output from CircleCI in a JSON file'
-    option :input, type: :string, desc: 'read data from this file instead of calling the CircleCI endpoint'
+    option :input, type: :string, desc: 'read data from this file instead of calling the CircleCI API'
     option :token, type: :string, desc: 'Your API token for CircleCI'
-    option :start, type: :string, desc: 'Start date in YYYY-MM-DD format. Defaults to Today - 7 days.'
+    option :start, type: :string, desc: 'Start date in YYYY-MM-DD format (default: Today - 7 days.'
 
     def rpt
       if options[:capture] && options[:input]
-        puts "You can't use both capture and input at the same time"
+        puts 'You can\'t use both capture and input at the same time'
         exit 1
       end
 
       token = options[:token] || ENV['CIRCLETOKEN']
       if token.empty?
-        puts "No Circle Token supplied. Use command line --token or environment variable 'CIRCLETOKEN'."
+        puts 'No Circle Token supplied. Use command line --token or environment variable \'CIRCLETOKEN\'.'
         exit 1
       end
 
@@ -125,6 +125,4 @@ module HsdCircleReports
       puts "Error reading from file: #{filename}\n#{e}"
     end
   end
-
-  CircleReport.start
 end

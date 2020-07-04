@@ -1,19 +1,35 @@
-<h1>Circle Reports</h1>
-Circlereports is a Ruby script that runs on your local machine.
+#Circle Reports
+Circlereports is a Ruby gem that runs on your local machine. It generates reports on the builds of a named branch from our `rails-api` repository.
 
-To run, from Terminal, you need to run `gem install thor` then run:
+Each report covers 7 days starting on the `--start` date provided.
+
+##Installation
+To install (until we have a gem server), clone the github repository, run bundle, then rake install
+
+##Execution
+To run:
 ```
-./circlereport.rb rpt <date>
+bin/hsd_circle_reports rpt
 ```
-where `date` is the day on which you wish the report to start. The default value for `date` is Today - 7 days.
+##Options
 
-You need to create a local environment variable `CIRCLETOKEN` which can be obtained from the CircleCI dashboard `https://circleci.com/account/api` `Personal API Tokens`
+  - --branch `branch_name`
+    * the branch you want to report on (default `develop`)
+  - --capture
+    * if specified, will capture the output from the CircleCI API in a `json` file
+    * you cannot specify both `--capture` and `--input`
+  - --token
+    * your API token for CircleCI. This can also be defined in an environment variable `CIRCLETOKEN`.
+  - --input `file_name`
+    * if specified, will read from this file instead of calling the CircleCI API
+  - --start `date`
+    * `YYYY-MM-DD` format
+    * If not specified, will default to Today - 7 days
 
-The ruby script will start on that day and include the following 6 days (a total of 7 days).
-
+##Output
 If the report runs successfully, you'll see output like this:
 ```text
-13:26 ~/dev/circlereports (master) $ ./circlereport.rb rpt 2020-03-20
+13:26 ~/dev/circlereports (master) $ bin/hsd_circle_reports rpt 2020-03-20
 Date: 2020-03-20
 Date: 2020-03-25 Successful builds: 3 other builds: 1
 Date: 2020-03-24 Successful builds: 4 other builds: 0
@@ -28,27 +44,9 @@ Percentage failing: 9.09
 
 If your token is incorrect, you'll see output like this:
 ```text
-13:24 ~/dev/circlereports (master) $ ./circlereport.rb rpt 2020-03-20
-Date: 2020-03-20
-Traceback (most recent call last):
-	14: from ./circlereport.rb:88:in `<main>'
-	13: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/base.rb:466:in `start'
-	12: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor.rb:387:in `dispatch'
-	11: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/invocation.rb:126:in `invoke_command'
-	10: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/command.rb:27:in `run'
-	 9: from ./circlereport.rb:18:in `rpt'
-	 8: from ./circlereport.rb:70:in `circle_data'
-	 7: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:35:in `open'
-	 6: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:735:in `open'
-	 5: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:165:in `open_uri'
-	 4: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:224:in `open_loop'
-	 3: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:224:in `catch'
-	 2: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:226:in `block in open_loop'
-	 1: from /Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:755:in `buffer_open'
-/Users/ian/.rvm/rubies/ruby-2.5.7/lib/ruby/2.5.0/open-uri.rb:377:in `open_http': 404 Not Found (OpenURI::HTTPError)
+13:24 ~/dev/circlereports (master) $ bin/hsd_circle_reports rpt --start 2020-06-27 --token badtoken
+Start Date: 2020-06-27
+Error retrieving from CircleCI: 404 Not Found.
+'404 Not Found' could indicate a problem with your Circle Token.
 13:24 ~/dev/circlereports (master) $
 ```
-
-<h2>Options</h2>
-`--capture` will capture the Circle data to a `JSON` file. The default is `--no-capture`.
-
