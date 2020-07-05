@@ -8,4 +8,4 @@ Metrics/MethodLength:
   Max: 30
 
 Metrics/PerceivedComplexity:
-  Max: 10
+  Max: 14

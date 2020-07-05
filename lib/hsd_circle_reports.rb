@@ -49,9 +49,7 @@ module HsdCircleReports
                      Date.today - 7
                    end
       puts "Start Date: #{start_date}"
-      if options[:input]
-        puts "Reading from file #{options[:input]}"
-      end
+      puts "Reading from file #{options[:input]}" if options[:input]
 
       branch = options[:branch] || 'develop'
 
