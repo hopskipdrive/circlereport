@@ -8,9 +8,6 @@ module HsdCircleReports
 
   require 'hsd_circle_reports/version'
   require 'hsd_circle_reports/reports'
-
-  class Error < StandardError; end
-
   require 'thor'
   require 'open-uri'
   require 'json'
@@ -35,22 +32,17 @@ module HsdCircleReports
     option :repository, type: :string, desc: 'The VCS repository name you test on CircleCI.'
 
     def build_stats
-      reporter = HsdCircleReports::Reports.new(options)
-      exit_code, errors = reporter.check_options
-      if exit_code.positive?
-        puts errors
-        exit exit_code
-      end
-      puts "Start Date: #{reporter.start_date}"
-      puts "Reading from file #{reporter.input_file}" if reporter.input_file
-
-      json_arr, errors = reporter.collect
-      unless json_arr
-        puts errors
-        exit exit_code
+      reporter = Reporter.new(options)
+      unless reporter.errors.size.zero?
+        reporter.errors.each { |err| puts err }
+        exit 1
       end
 
-      reporter.report(reporter.scan_results(json_arr, reporter.start_date))
+      reporter.report
+      return if reporter.errors.size.zero?
+
+      reporter.errors.each { |err| puts err }
+      exit 2
     end
   end
 end
