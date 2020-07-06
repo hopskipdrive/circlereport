@@ -15,7 +15,7 @@
     </EXTENSION>
     <EXTENSION ID="org.jetbrains.plugins.ruby.rails.run.RailsRunConfigurationExtension" SCRATCH_USE_RAILS_RUNNER="false" />
     <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/lib/hsd_circle_reports_debug.rb" />
-    <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="rpt --input ./circle_data_2020-06-11T09:57:28-07:00.json --start 2020-06-03" />
+    <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="build_stats --input spec/fixtures/circle_data_2020-06-11T09:57:28-07:00.json --start 2020-06-03" />
     <method v="2" />
   </configuration>
 </component>

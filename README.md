@@ -9,7 +9,7 @@ To install (until we have a gem server), clone the github repository, run bundle
 ##Execution
 To run:
 ```
-bin/hsd_circle_reports rpt
+bin/hsd_circle_reports build_stats
 ```
 ##Options
 
@@ -29,7 +29,7 @@ bin/hsd_circle_reports rpt
 ##Output
 If the report runs successfully, you'll see output like this:
 ```text
-13:26 ~/dev/circlereports (master) $ bin/hsd_circle_reports rpt 2020-03-20
+13:26 ~/dev/circlereports (master) $ bin/hsd_circle_reports build_stats 2020-03-20
 Date: 2020-03-20
 Date: 2020-03-25 Successful builds: 3 other builds: 1
 Date: 2020-03-24 Successful builds: 4 other builds: 0
@@ -44,7 +44,7 @@ Percentage failing: 9.09
 
 If your token is incorrect, you'll see output like this:
 ```text
-13:24 ~/dev/circlereports (master) $ bin/hsd_circle_reports rpt --start 2020-06-27 --token badtoken
+13:24 ~/dev/circlereports (master) $ bin/hsd_circle_reports build_stats --start 2020-06-27 --token badtoken
 Start Date: 2020-06-27
 Error retrieving from CircleCI: 404 Not Found.
 '404 Not Found' could indicate a problem with your Circle Token.
