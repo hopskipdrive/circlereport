@@ -72,7 +72,7 @@ class Reporter
     File.open("circle_data_#{DateTime.now}.json", 'w') { |file| file.write(response) } if @capture
     JSON.parse(response)
   rescue StandardError => e
-    errors << "Error retrieving from CircleCI:\n    #{e}.\n'"\
+    errors << "Error retrieving from CircleCI:\n    #{e}.\n"\
                 "    '404 Not Found' could indicate a problem with your Circle Token."
   end
 
