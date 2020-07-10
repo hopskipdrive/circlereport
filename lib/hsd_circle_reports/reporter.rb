@@ -3,6 +3,7 @@ class Reporter
   attr_reader :errors
 
   def initialize(options)
+    @errors = []
     @account = options[:account] || 'hopskipdrive'
     @branch = options[:branch] || 'develop'
     @capture = options[:capture] || false
@@ -14,9 +15,10 @@ class Reporter
                     Date.today - 7
                   end
     @token = options[:token] || ENV['CIRCLETOKEN']
-    @errors = []
+    if @token.nil? || @token.empty?
+      @errors << "Circle Token missing. Use --token or environment variable 'CIRCLETOKEN'."
+    end
     @errors << "You can't use both capture and input at the same time" if @capture && @input_file
-    @errors << "Circle Token missing. Use --token or environment variable 'CIRCLETOKEN'." if @token.empty?
   end
 
   def report

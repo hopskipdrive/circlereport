@@ -33,8 +33,10 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundle-audit', '~> 0.1'
   spec.add_development_dependency 'bundler', '~> 1.17'
+  spec.add_development_dependency 'climate_control', '~> 0.2'
   spec.add_development_dependency 'rake', '~> 12.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.86'
+  spec.add_development_dependency 'vcr', '~> 6.0'
   spec.add_dependency 'thor', '~> 1.0'
 end

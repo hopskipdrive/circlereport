@@ -4,10 +4,7 @@ RSpec.describe HsdCircleReports do
   end
 
   context '#build_stats' do
-    let(:params) { '--input x --capture' }
-    subject HsdCircleReports::Report.build_stats params
     it 'does something useful' do
-      subject
       expect(true).to eq(true)
     end
   end

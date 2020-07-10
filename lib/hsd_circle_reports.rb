@@ -7,7 +7,7 @@ module HsdCircleReports
   class Error < StandardError; end
 
   require 'hsd_circle_reports/version'
-  require 'hsd_circle_reports/reports'
+  require 'hsd_circle_reports/reporter'
   require 'thor'
   require 'open-uri'
   require 'json'

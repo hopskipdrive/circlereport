@@ -6,6 +6,13 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - spec/**/*
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+    - hsd_circle_reports.gemspec
 
 Metrics/PerceivedComplexity:
   Max: 15
