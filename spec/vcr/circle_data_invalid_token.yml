@@ -1,0 +1,63 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://circleci.com/api/v1/project/hopskipdrive/rails-api/tree/develop?limit=100&shallow=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Circle-Token:
+      - not good
+      Accept:
+      - Application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - text/plain;charset=utf-8
+      Date:
+      - Fri, 10 Jul 2020 20:22:18 GMT
+      Server:
+      - nginx
+      Set-Cookie:
+      - ring-session=hk3mk6qWaedBebJiLMllYR0JaLTcnEY5WQiE0b8%2FvbqyiLnoKK2W7%2FYTGVAym2CTNbb31bN3c6AWKmfdmrY3tuszYUY3uGrxUOX8RW7xWFeN7Q6PZb9X2SD21CDEnf9glq9YW36qRrgrGXqunzylkMEqZsAZJyMKlC1%2BZ1AJKHqHWMigetbVmdp4L0IGAlRvfPEQKI8g7mYG7mF7wCPv%2F61dddTOuLsMYl%2FhwDLxdkk%3D--hCGVJA%2BcKmmm3RabqZ76KGEAMr9F5oq9t4RtDyH4dCs%3D;Path=/;HttpOnly;Expires=Sat,
+        10 Jul 2021 16:45:05 +0000;Max-Age=1209600;Secure
+      Strict-Transport-Security:
+      - max-age=15724800
+      Vary:
+      - Origin
+      X-Circleci-Identity:
+      - circle-www-api-v1-6c9b7977f8-gqdc5
+      X-Frame-Options:
+      - DENY
+      X-Ratelimit-Limit:
+      - '151'
+      X-Ratelimit-Remaining:
+      - '150'
+      X-Ratelimit-Reset:
+      - '0'
+      X-Request-Id:
+      - 871e47bd-4b92-431c-a9bf-eb7d1955cb19
+      X-Route:
+      - "/api/v1/project/:username/:repo/tree/:branch"
+      Content-Length:
+      - '37'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "message" : "Project not found"
+        }
+  recorded_at: Fri, 10 Jul 2020 20:22:18 GMT
+recorded_with: VCR 6.0.0

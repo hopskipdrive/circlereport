@@ -38,11 +38,13 @@ module HsdCircleReports
         exit 1
       end
 
-      reporter.report
-      return if reporter.errors.size.zero?
+      results, = reporter.report
+      unless reporter.errors.size.zero?
+        reporter.errors.each { |err| puts err }
+        exit 2
+      end
 
-      reporter.errors.each { |err| puts err }
-      exit 2
+      results.each { |r| puts r }
     end
   end
 end

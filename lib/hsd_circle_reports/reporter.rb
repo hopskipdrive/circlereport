@@ -1,6 +1,6 @@
 # regular Ruby class. Validates options, collects data, produces report.
 class Reporter
-  attr_reader :errors
+  attr_reader :errors, :report_period
 
   def initialize(options)
     @errors = []
@@ -14,32 +14,39 @@ class Reporter
                   else
                     Date.today - 7
                   end
+    @report_period = @start_date..@start_date + 6
     @token = options[:token] || ENV['CIRCLETOKEN']
-    if @token.nil? || @token.empty?
+    if (@token.nil? || @token.empty?) && !@input_file
       @errors << "Circle Token missing. Use --token or environment variable 'CIRCLETOKEN'."
     end
     @errors << "You can't use both capture and input at the same time" if @capture && @input_file
   end
 
   def report
-    puts "Start Date: #{@start_date}"
-    puts "Reading from file #{@input_file}" if @input_file
     circle_json = @input_file ? file_data : circle_data
     return unless @errors.size.zero?
 
-    success = 0.0
-    fails = 0.0
-    results = scan_results(circle_json)
-    results.each do |date_key, value|
-      puts "Date: #{date_key} Successful builds: #{value[:success]} other builds: #{value[:fail]}"
-      success += value[:success]
-      fails += value[:fail]
+    lines = []
+    results = { success: 0.0, fails: 0.0 }
+    lines << "Report Period: #{@report_period}"
+    lines << "Reading from file #{@input_file}" if @input_file
+
+    scan_results(circle_json).each do |date_key, value|
+      lines << "Date: #{date_key} Successful builds: #{value[:success]} other builds: #{value[:fail]}"
+      results[:success] += value[:success]
+      results[:fails] += value[:fail]
     end
-    puts "\nTotal successful builds: #{success.round(0)}, total failing builds: #{fails.round(0)}"
-    percent_success = (success / (success + fails)) * 100
-    percent_fails = (fails / (success + fails)) * 100
-    puts "Percentage succeeding: #{percent_success.round(2)}" unless success.zero?
-    puts "Percentage failing: #{percent_fails.round(2)}" unless fails.zero?
+    lines << "\nPassing builds: #{results[:success].round(0)}"\
+             ". Failing builds: #{results[:fails].round(0)}"
+
+    if results[:success].positive? && results[:fails].positive?
+      total_builds = results[:success] + results[:fails]
+      results[:percent_success] = ((results[:success] / total_builds) * 100).round(2)
+      results[:percent_fails] = ((results[:fails] / total_builds) * 100).round(2)
+      lines << "Percentage succeeding: #{results[:percent_success]}"
+      lines << "Percentage failing: #{results[:percent_fails]}"
+    end
+    [lines, results]
   end
 
   private
@@ -47,10 +54,9 @@ class Reporter
   def scan_results(circle_json)
     # results is a hash where the date is the key and the value is a hash {#success, #fail}
     results = {}
-    range = @start_date..@start_date + 6
     circle_json.each do |build|
       commit_date = Date.parse(build['committer_date'])
-      next unless range.include?(commit_date)
+      next unless @report_period.include?(commit_date)
 
       date_key = commit_date.to_s
       results[date_key] = { success: 0, fail: 0 } unless results.key?(date_key)
@@ -74,8 +80,9 @@ class Reporter
     File.open("circle_data_#{DateTime.now}.json", 'w') { |file| file.write(response) } if @capture
     JSON.parse(response)
   rescue StandardError => e
-    errors << "Error retrieving from CircleCI:\n    #{e}.\n"\
-                "    '404 Not Found' could indicate a problem with your Circle Token."
+    errors << "Error retrieving from CircleCI:\n"\
+              "    #{e}.\n"\
+              '    404 Not Found may indicate a problem with your Circle Token.'
   end
 
   def file_data

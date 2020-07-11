@@ -1,6 +1,8 @@
 require 'bundler/setup'
 require 'hsd_circle_reports'
 require 'climate_control'
+require 'webmock'
+require 'vcr'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -11,5 +13,18 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  VCR.configure do |c|
+    c.cassette_library_dir = 'spec/vcr'
+    c.hook_into :webmock
+  end
+
+  def capture_stdout(&blk)
+    $stdout = fake = StringIO.new
+    blk.call
+    fake.string
+  ensure
+    $stdout.reopen
   end
 end
