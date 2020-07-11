@@ -32,7 +32,7 @@ class Reporter
     lines << "Reading from file #{@input_file}" if @input_file
 
     scan_results(circle_json).each do |date_key, value|
-      lines << "Date: #{date_key} Successful builds: #{value[:success]} other builds: #{value[:fail]}"
+      lines << "Date: #{date_key} Successful builds: #{value[:success]}, failing builds: #{value[:fail]}"
       results[:success] += value[:success]
       results[:fails] += value[:fail]
     end
