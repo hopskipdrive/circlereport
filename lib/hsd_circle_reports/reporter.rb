@@ -1,6 +1,6 @@
 # regular Ruby class. Validates options, collects data, produces report.
 class Reporter
-  attr_reader :errors, :report_period
+  attr_reader :errors
 
   def initialize(options)
     @errors = []

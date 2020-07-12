@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'hsd_circle_reports/version'
-
 # HsdCircleReports is the main (only) module
 module HsdCircleReports
   class Error < StandardError; end
