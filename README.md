@@ -90,9 +90,15 @@ In the root of the repository, run:
 To test, run:
   - `rspec`
   
+Before pushing to `github`, run:
+  - `rubocop -a`
+  - `bundle audit --update`  
+  
 When finished, run:
   -  `rake build`
   -  `rake install`
 
+### Development tips & tricks
+- If you're using `rvm`, watch your `gemset`. You probably want to switch to the `global` gemset before running `rake install`. That will make the executable available whenever your Ruby version is in use.
 
-Some sample `run configurations` for RubyMine are in the `run_configurations` folder.
+- Some sample `run configurations` for RubyMine are in the `run_configurations` folder.
