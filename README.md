@@ -57,7 +57,7 @@ hsd_circle_reports help build_stats
 ### Output
 If the report runs successfully, you'll see output like this:
 ```text
-13:26 ~ $ hsd_circle_reports build_stats 2020-03-20
+13:26 ~ $ hsd_circle_reports
 Date: 2020-03-20
 Date: 2020-03-25 Successful builds: 3 other builds: 1
 Date: 2020-03-24 Successful builds: 4 other builds: 0
@@ -72,11 +72,11 @@ Percentage failing: 9.09
 
 If your token is incorrect, you'll see output like this:
 ```text
-13:24 ~ $ hsd_circle_reports build_stats --start 2020-06-27 --token badtoken
+13:24 ~ $ hsd_circle_reports --start 2020-06-27 --token badtoken
 Start Date: 2020-06-27
 Error retrieving from CircleCI: 
     404 Not Found.
-    '404 Not Found' could indicate a problem with your Circle Token.
+   '404 Not Found' could indicate a problem with your Circle Token.
 13:24 ~ $
 ```
 
