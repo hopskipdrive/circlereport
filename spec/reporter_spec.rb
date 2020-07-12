@@ -38,7 +38,7 @@ RSpec.describe Reporter do
       options = { token: 'hello', start: 'hello again' }
       reporter = described_class.new(options)
       expect(reporter.errors.size).to eq 1
-      expect(reporter.errors).to include "Invalid start date: hello again"
+      expect(reporter.errors).to include 'Invalid start date: hello again'
     end
   end
 

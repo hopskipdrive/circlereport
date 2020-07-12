@@ -93,9 +93,10 @@ class Reporter
 
   def make_start_date(input_date)
     return Date.today - 7 unless input_date
+
     begin
       Date.parse(input_date)
-    rescue => e
+    rescue StandardError
       @errors << "Invalid start date: #{input_date}"
       nil
     end

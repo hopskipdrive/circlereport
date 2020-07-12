@@ -26,7 +26,7 @@ module HsdCircleReports
     option :account, type: :string, desc: 'Your CircleCI account name', default: 'hopskipdrive'
     option :branch, type: :string, desc: 'The branch to report on', default: 'develop'
     option :repository, type: :string, desc: 'The VCS repository to report on', default: 'rails-api'
-    option :start, type: :string, desc: "Start date in YYYY-MM-DD format. Default: Today - 7 days"
+    option :start, type: :string, desc: 'Start date in YYYY-MM-DD format. Default: Today - 7 days'
     option :capture, type: :boolean, desc: 'Save the output from CircleCI in a JSON file', default: false
     option :input, type: :string, desc: 'Read data from this file instead of calling the CircleCI API'
     option :token, type: :string, desc: 'Your API token for CircleCI'
