@@ -1,16 +1,27 @@
 # Circle Reports
-`circlereports` is a Ruby gem that runs on your local machine. It generates reports on the builds of a named branch from our `rails-api` repository.
+`circlereports` is a Ruby gem that runs on your local machine. It generates reports by calling the CircleCI API to retrieve information about build workflows.
 
-Each report covers 7 days starting on the `--start` date provided.
+It generates a report covering 7 days, starting on the `--start` date provided.
 
 ## Installation
-To install (until we have a gem server), clone the github repository, run `bundle`, then `rake install`
+To install (until we have a gem server):
+ - clone the github repository
+ - run `bundle`
+ - run `rake build`
+ - run `rake install`
 
 ## Execution
+You will need an API token from CircleCI to allow you to execute this command. You can [get it here](https://app.circleci.com/settings/user/tokens?return-to=https%3A%2F%2Fapp.circleci.com%2Fpipelines%2Fgithub%2Fhopskipdrive%2Frails-api). 
+
 To run:
 ```
-hsd_circle_reports build_stats
+hsd_circle_reports
 ```
+To see all options:
+```
+hsd_circle_reports help build_stats
+```
+
 ### Options
 
   - --account `account_name`
@@ -19,6 +30,9 @@ hsd_circle_reports build_stats
 
   - --branch `branch_name`
     * the branch you want to report on (default `develop`)
+
+  - --repository `repository_name`
+    * the repository you want to report on (default `rails-api`)  
 
 
   - --capture
@@ -31,9 +45,6 @@ hsd_circle_reports build_stats
     * you cannot specify both `--input` and `--capture`
 
 
-  - --repository `repository_name`
-    * the repository you want to report on (default `rails-api`)  
-
 
   - --start `date`
     * `YYYY-MM-DD` format
@@ -41,7 +52,7 @@ hsd_circle_reports build_stats
 
 
   - --token `token`
-    * your API token for CircleCI. This can also be defined in an environment variable `CIRCLETOKEN`.
+    * your API token for CircleCI. This can also be provided in an environment variable `CIRCLETOKEN`.
 
 ### Output
 If the report runs successfully, you'll see output like this:

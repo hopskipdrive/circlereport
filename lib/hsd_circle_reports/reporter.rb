@@ -9,12 +9,8 @@ class Reporter
     @capture = options[:capture] || false
     @input_file = options[:input]
     @repository = options[:repository] || 'rails-api'
-    @start_date = if options[:start]
-                    Date.parse(options[:start])
-                  else
-                    Date.today - 7
-                  end
-    @report_period = @start_date..@start_date + 6
+    @start_date = make_start_date(options[:start])
+    @report_period = @start_date..@start_date + 6 if @start_date
     @token = options[:token] || ENV['CIRCLETOKEN']
     if (@token.nil? || @token.empty?) && !@input_file
       @errors << "Circle Token missing. Use --token or environment variable 'CIRCLETOKEN'."
@@ -27,24 +23,24 @@ class Reporter
     return unless @errors.size.zero?
 
     lines = []
-    results = { success: 0.0, fails: 0.0 }
+    results = { success: 0.0, fail: 0.0 }
     lines << "Report Period: #{@report_period}"
     lines << "Reading from file #{@input_file}" if @input_file
 
     scan_results(circle_json).each do |date_key, value|
       lines << "Date: #{date_key} Successful builds: #{value[:success]}, failing builds: #{value[:fail]}"
       results[:success] += value[:success]
-      results[:fails] += value[:fail]
+      results[:fail] += value[:fail]
     end
     lines << "\nPassing builds: #{results[:success].round(0)}"\
-             ". Failing builds: #{results[:fails].round(0)}"
+             ". Failing builds: #{results[:fail].round(0)}"
 
-    if results[:success].positive? && results[:fails].positive?
-      total_builds = results[:success] + results[:fails]
+    if results[:success].positive? || results[:fail].positive?
+      total_builds = results[:success] + results[:fail]
       results[:percent_success] = ((results[:success] / total_builds) * 100).round(2)
-      results[:percent_fails] = ((results[:fails] / total_builds) * 100).round(2)
+      results[:percent_fail] = ((results[:fail] / total_builds) * 100).round(2)
       lines << "Percentage succeeding: #{results[:percent_success]}"
-      lines << "Percentage failing: #{results[:percent_fails]}"
+      lines << "Percentage failing: #{results[:percent_fail]}"
     end
     [lines, results]
   end
@@ -93,5 +89,15 @@ class Reporter
     JSON.parse(response)
   rescue StandardError => e
     errors << "Error reading from file: #{@input_file}\n    #{e}"
+  end
+
+  def make_start_date(input_date)
+    return Date.today - 7 unless input_date
+    begin
+      Date.parse(input_date)
+    rescue => e
+      @errors << "Invalid start date: #{input_date}"
+      nil
+    end
   end
 end

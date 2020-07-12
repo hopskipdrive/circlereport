@@ -33,6 +33,13 @@ RSpec.describe Reporter do
         expect(reporter.errors).to include "Circle Token missing. Use --token or environment variable 'CIRCLETOKEN'."
       end
     end
+
+    it 'reports an invalid start date' do
+      options = { token: 'hello', start: 'hello again' }
+      reporter = described_class.new(options)
+      expect(reporter.errors.size).to eq 1
+      expect(reporter.errors).to include "Invalid start date: hello again"
+    end
   end
 
   context '#circle_data' do
@@ -69,9 +76,9 @@ RSpec.describe Reporter do
       output_lines, raw_results = reporter.report
       expect(output_lines.size).to eq 9
       expect(raw_results[:success]).to eq 24
-      expect(raw_results[:fails]).to eq 2
+      expect(raw_results[:fail]).to eq 2
       expect(raw_results[:percent_success]).to eq 92.31
-      expect(raw_results[:percent_fails]).to eq 7.69
+      expect(raw_results[:percent_fail]).to eq 7.69
     end
 
     it 'produces zeros if no data falls inside range' do
@@ -80,9 +87,9 @@ RSpec.describe Reporter do
       output_lines, raw_results = reporter.report
       expect(output_lines.size).to eq 3
       expect(raw_results[:success]).to eq 0
-      expect(raw_results[:fails]).to eq 0
+      expect(raw_results[:fail]).to eq 0
       expect(raw_results).to_not have_key(:percent_success)
-      expect(raw_results).to_not have_key(:percent_fails)
+      expect(raw_results).to_not have_key(:percent_fail)
     end
   end
 end

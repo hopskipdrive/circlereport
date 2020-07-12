@@ -12,7 +12,9 @@ RSpec.describe HsdCircleReports::Report do
       "Report Period: 2020-06-11..2020-06-17\n"\
       "Reading from file #{subject.options[:input]}\n"\
       "Date: 2020-06-11 Successful builds: 2, failing builds: 0\n\n"\
-      "Passing builds: 2. Failing builds: 0\n"
+      "Passing builds: 2. Failing builds: 0\n"\
+      "Percentage succeeding: 100.0\n"\
+      "Percentage failing: 0.0\n"
     end
     let(:output) { capture_stdout { subject.build_stats } }
 
