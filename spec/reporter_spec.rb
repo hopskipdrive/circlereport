@@ -6,13 +6,15 @@ RSpec.describe Reporter do
       options = { token: 'hello' }
       ClimateControl.modify CIRCLETOKEN: '' do
         reporter = described_class.new(options)
+        expect(reporter.instance_variables.size).to eq 9
         expect(reporter.instance_variable_get(:@account)).to eq 'hopskipdrive'
         expect(reporter.instance_variable_get(:@branch)).to eq 'develop'
         expect(reporter.instance_variable_get(:@capture)).to eq false
         expect(reporter.instance_variable_get(:@input_file)).to eq nil
         expect(reporter.instance_variable_get(:@repository)).to eq 'rails-api'
         expect(reporter.instance_variable_get(:@start_date)).to eq Date.today - 7
-        expect(reporter.errors.size).to eq 0
+        expect(reporter.instance_variable_get(:@report_period)).to eq Date.today - 7..Date.today - 1
+        expect(reporter.errors.size).to eq 0 # has an attr_reader
       end
     end
 
