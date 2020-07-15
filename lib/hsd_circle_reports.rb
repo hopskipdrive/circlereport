@@ -16,11 +16,7 @@ module HsdCircleReports
     def self.exit_on_failure?
       true
     end
-
-    def self.generate_default_date
-      (Date.today - 7).strftime('%F')
-    end
-    default_date = generate_default_date
+    default_date = (Date.today - 7).strftime('%F')
 
     desc 'build_stats',
          'Retrieves run data from CircleCI and displays #successes and #fails '\
